@@ -1,8 +1,7 @@
 
 """
 INSURANCE CHARGES PREDICTION
-Machine Learning Practical - Questions 6 to 13
-Algorithm: Linear Regression
+Linear Regression Practical - Questions 6 to 13
 """
 
 from pathlib import Path
@@ -17,7 +16,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 # ============================================================
-# STREAMLIT PAGE CONFIGURATION
+# PAGE CONFIGURATION
 # ============================================================
 
 st.set_page_config(
@@ -26,29 +25,91 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🏥 Insurance Charges Prediction")
-st.subheader("Machine Learning Practical — Linear Regression")
+# ============================================================
+# CUSTOM APPEARANCE
+# ============================================================
 
-st.write(
-    "This application analyzes medical insurance data, "
-    "trains a Linear Regression model, evaluates its performance, "
-    "and predicts insurance charges for a new individual."
-)
+st.markdown("""
+<style>
+.stApp {
+    background-color: #0E1628;
+    color: #E5E7EB;
+}
+
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    max-width: 1200px;
+}
+
+h1 {
+    color: #60A5FA !important;
+    font-weight: 700;
+}
+
+h2 {
+    color: #93C5FD !important;
+}
+
+h3 {
+    color: #CBD5E1 !important;
+}
+
+div[data-testid="stMetric"] {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    padding: 18px;
+    border-radius: 12px;
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #94A3B8;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #60A5FA;
+}
+
+div[data-testid="stDataFrame"] {
+    border: 1px solid #334155;
+    border-radius: 10px;
+}
+
+hr {
+    border-color: #334155;
+}
+
+.stAlert {
+    border-radius: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # ============================================================
-# QUESTION 6: LOAD AND EXPLORE THE DATASET
+# TITLE
+# ============================================================
+
+st.title("🏥 Insurance Charges Prediction")
+
+st.markdown("""
+A Machine Learning practical using **Linear Regression** to analyze
+medical insurance data and predict individual insurance charges.
+""")
+
+st.divider()
+
+
+# ============================================================
+# DATASET PATH
 # ============================================================
 
 DATA_PATH = Path("insurance.csv")
 
-st.header("Question 6: Dataset Exploration")
-
 if not DATA_PATH.exists():
     st.error(
-        f"Dataset not found: {DATA_PATH.resolve()}. "
-        "Please upload insurance.csv to your GitHub repository "
-        "in the same directory as this Python file."
+        "The insurance.csv file was not found. "
+        "Please upload it to the same GitHub folder as this Python file."
     )
     st.stop()
 
@@ -65,32 +126,35 @@ required_columns = [
 ]
 
 missing_columns = [
-    col for col in required_columns if col not in df.columns
+    column for column in required_columns
+    if column not in df.columns
 ]
 
 if missing_columns:
-    st.error(f"Missing required columns: {missing_columns}")
+    st.error(f"Missing columns: {missing_columns}")
     st.stop()
 
 df = df[required_columns].dropna().copy()
 
-st.write("### First Five Rows")
-st.dataframe(df.head(), use_container_width=True)
 
-st.write("### Dataset Information")
+# ============================================================
+# QUESTION 6: LOAD AND DISPLAY DATASET
+# ============================================================
 
-col1, col2, col3 = st.columns(3)
+st.header("Question 6: Dataset Loading and Exploration")
 
-col1.metric("Total Records", f"{df.shape[0]:,}")
-col2.metric("Total Features", len(df.columns) - 1)
-col3.metric("Missing Values", int(df.isnull().sum().sum()))
+st.markdown("### First Five Rows")
 
-st.write("### Summary Statistics")
-st.dataframe(df.describe(), use_container_width=True)
-
-st.write("### Missing Values")
 st.dataframe(
-    df.isnull().sum().rename("Missing Values"),
+    df.head(),
+    use_container_width=True,
+    hide_index=True
+)
+
+st.markdown("### Summary Statistics")
+
+st.dataframe(
+    df.describe(),
     use_container_width=True
 )
 
@@ -99,7 +163,14 @@ st.dataframe(
 # QUESTION 7: ONE-HOT ENCODING
 # ============================================================
 
-st.header("Question 7: One-Hot Encoding")
+st.divider()
+
+st.header("Question 7: Handling Categorical Variables")
+
+st.markdown("""
+Categorical variables are converted into numerical features
+using One-Hot Encoding.
+""")
 
 df_encoded = pd.get_dummies(
     df,
@@ -108,18 +179,20 @@ df_encoded = pd.get_dummies(
     dtype=int
 )
 
-st.write("Encoded Dataset")
-st.dataframe(df_encoded.head(), use_container_width=True)
-
-st.write("Encoded Column Names")
-st.write(df_encoded.columns.tolist())
+st.dataframe(
+    df_encoded.head(),
+    use_container_width=True,
+    hide_index=True
+)
 
 
 # ============================================================
-# QUESTION 8: SPLIT FEATURES AND TARGET (80:20)
+# QUESTION 8: SPLIT FEATURES AND TARGET
 # ============================================================
 
-st.header("Question 8: Training and Testing Split")
+st.divider()
+
+st.header("Question 8: Training and Testing Data")
 
 X = df_encoded.drop(columns=["charges"])
 y = df_encoded["charges"]
@@ -133,18 +206,26 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 col1, col2 = st.columns(2)
 
-col1.metric("Training Records", X_train.shape[0])
-col2.metric("Testing Records", X_test.shape[0])
+with col1:
+    st.metric(
+        "Training Data (80%)",
+        f"{len(X_train):,} records"
+    )
 
-st.write("Training Features Shape:", X_train.shape)
-st.write("Testing Features Shape:", X_test.shape)
+with col2:
+    st.metric(
+        "Testing Data (20%)",
+        f"{len(X_test):,} records"
+    )
 
 
 # ============================================================
-# QUESTION 9: BUILD AND TRAIN LINEAR REGRESSION MODEL
+# QUESTION 9: BUILD AND TRAIN LINEAR REGRESSION
 # ============================================================
 
-st.header("Question 9: Model Training")
+st.divider()
+
+st.header("Question 9: Linear Regression Model")
 
 model = LinearRegression()
 
@@ -152,37 +233,49 @@ model.fit(X_train, y_train)
 
 st.success("Linear Regression model trained successfully.")
 
-st.write("### Model Coefficients")
+st.markdown("### Model Coefficients")
 
 coefficients = pd.DataFrame({
     "Feature": X.columns,
     "Coefficient": model.coef_
 })
 
-st.dataframe(coefficients, use_container_width=True)
+st.dataframe(
+    coefficients,
+    use_container_width=True,
+    hide_index=True
+)
 
-st.write("### Model Intercept")
-st.write(round(model.intercept_, 4))
+st.markdown("### Model Intercept")
+
+st.code(f"{model.intercept_:.4f}")
 
 
 # ============================================================
-# QUESTION 10: DISPLAY REGRESSION EQUATION
+# QUESTION 10: REGRESSION EQUATION
 # ============================================================
 
-st.header("Question 10: Regression Equation")
+st.divider()
+
+st.header("Question 10: Linear Regression Equation")
 
 equation = f"charges = {model.intercept_:.4f}"
 
 for feature, coefficient in zip(X.columns, model.coef_):
     sign = "+" if coefficient >= 0 else "-"
-    equation += f" {sign} {abs(coefficient):.4f}({feature})"
+    equation += (
+        f" {sign} {abs(coefficient):.4f}({feature})"
+    )
 
-st.code(equation, language="text")
+with st.expander("View the complete regression equation", expanded=True):
+    st.code(equation, language="text")
 
 
 # ============================================================
 # QUESTION 11: MODEL EVALUATION
 # ============================================================
+
+st.divider()
 
 st.header("Question 11: Model Evaluation")
 
@@ -190,32 +283,54 @@ y_pred = model.predict(X_test)
 
 mae = mean_absolute_error(y_test, y_pred)
 mse = mean_squared_error(y_test, y_pred)
-rmse = mse ** 0.5
 r2 = r2_score(y_test, y_pred)
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
-col1.metric("MAE", f"${mae:,.2f}")
-col2.metric("MSE", f"${mse:,.2f}")
-col3.metric("RMSE", f"${rmse:,.2f}")
-col4.metric("R² Score", f"{r2:.4f}")
+with col1:
+    st.metric(
+        "Mean Absolute Error (MAE)",
+        f"${mae:,.2f}"
+    )
 
-st.write(f"R² as a percentage: {r2 * 100:.2f}%")
+with col2:
+    st.metric(
+        "Mean Squared Error (MSE)",
+        f"${mse:,.2f}"
+    )
+
+with col3:
+    st.metric(
+        "R² Score",
+        f"{r2 * 100:.2f}%"
+    )
+
+st.caption(
+    "R² percentage represents the proportion of variation in "
+    "insurance charges explained by the model. It is not classification accuracy."
+)
 
 
 # ============================================================
-# QUESTION 12(i): ACTUAL VS PREDICTED PLOT
+# QUESTION 12(i): REGRESSION PLOT
 # ============================================================
 
-st.header("Question 12(i): Actual vs Predicted Plot")
+st.divider()
 
-fig1, ax1 = plt.subplots(figsize=(9, 6))
+st.header("Question 12(i): Regression Plot")
+
+fig1, ax1 = plt.subplots(figsize=(9, 5))
+
+fig1.patch.set_facecolor("#0E1628")
+ax1.set_facecolor("#1E293B")
 
 ax1.scatter(
     y_test,
     y_pred,
-    alpha=0.65,
-    label="Test observations"
+    color="#60A5FA",
+    alpha=0.75,
+    edgecolors="none",
+    label="Predicted charges"
 )
 
 line_min = min(y_test.min(), y_pred.min())
@@ -224,81 +339,62 @@ line_max = max(y_test.max(), y_pred.max())
 ax1.plot(
     [line_min, line_max],
     [line_min, line_max],
+    color="#F87171",
     linestyle="--",
     linewidth=2,
-    label="Perfect prediction"
+    label="Ideal prediction line"
 )
 
-ax1.set_xlabel("Actual Insurance Charges ($)")
-ax1.set_ylabel("Predicted Insurance Charges ($)")
-ax1.set_title("Linear Regression: Actual vs Predicted Charges")
+ax1.set_xlabel(
+    "Actual Insurance Charges ($)",
+    color="white"
+)
 
+ax1.set_ylabel(
+    "Predicted Insurance Charges ($)",
+    color="white"
+)
+
+ax1.set_title(
+    "Actual vs Predicted Insurance Charges",
+    color="white"
+)
+
+ax1.tick_params(colors="white")
+ax1.grid(alpha=0.15)
 ax1.legend()
-ax1.grid(True, alpha=0.25)
 
 fig1.tight_layout()
 
 st.pyplot(fig1)
 
-fig1.savefig(
-    "regression_actual_vs_predicted.png",
-    dpi=300,
-    bbox_inches="tight"
-)
-
 plt.close(fig1)
 
 
 # ============================================================
-# QUESTION 12(ii): RESIDUAL PLOT
+# QUESTION 12(ii): CONFUSION MATRIX NOTE
 # ============================================================
 
-st.header("Question 12(ii): Residual Plot")
+st.markdown("### Question 12(ii): Confusion Matrix Heatmap")
 
-residuals = y_test - y_pred
-
-fig2, ax2 = plt.subplots(figsize=(9, 6))
-
-ax2.scatter(
-    y_pred,
-    residuals,
-    alpha=0.65
-)
-
-ax2.axhline(
-    y=0,
-    linestyle="--",
-    linewidth=2
-)
-
-ax2.set_xlabel("Predicted Insurance Charges ($)")
-ax2.set_ylabel("Residual (Actual - Predicted) ($)")
-ax2.set_title("Residual Plot for Linear Regression")
-
-ax2.grid(True, alpha=0.25)
-
-fig2.tight_layout()
-
-st.pyplot(fig2)
-
-fig2.savefig(
-    "regression_residual_plot.png",
-    dpi=300,
-    bbox_inches="tight"
-)
-
-plt.close(fig2)
+st.info("""
+A confusion matrix is designed for classification problems.
+This practical uses Linear Regression to predict continuous
+insurance charges, so a confusion matrix is not mathematically
+appropriate. The regression plot above is used to evaluate
+predicted charges against actual charges.
+""")
 
 
 # ============================================================
-# QUESTION 13: PREDICT CHARGES FOR A NEW INDIVIDUAL
+# QUESTION 13: PREDICT INSURANCE CHARGES
 # ============================================================
 
-st.header("Question 13: New Individual Prediction")
+st.divider()
 
-st.write(
-    "Predict insurance charges for the following individual:"
-)
+st.header("Question 13: Insurance Charges Prediction")
+
+st.markdown("### Individual Information")
 
 new_person = pd.DataFrame([{
     "age": 19,
@@ -309,7 +405,11 @@ new_person = pd.DataFrame([{
     "region": "southwest"
 }])
 
-st.dataframe(new_person, use_container_width=True)
+st.dataframe(
+    new_person,
+    use_container_width=True,
+    hide_index=True
+)
 
 new_person_encoded = pd.get_dummies(
     new_person,
@@ -323,37 +423,26 @@ new_person_encoded = new_person_encoded.reindex(
     fill_value=0
 )
 
-predicted_charge = model.predict(new_person_encoded)[0]
+predicted_charge = model.predict(
+    new_person_encoded
+)[0]
 
-st.success(
-    f"Predicted Insurance Charge: ${predicted_charge:,.2f}"
+st.markdown("### Predicted Insurance Charge")
+
+st.metric(
+    label="Estimated Insurance Charges",
+    value=f"${predicted_charge:,.2f}"
 )
 
-
-# ============================================================
-# SAVE PREDICTION RESULTS
-# ============================================================
-
-results = pd.DataFrame({
-    "actual_charges": y_test.values,
-    "predicted_charges": y_pred,
-    "residuals": residuals.values
-})
-
-results.to_csv(
-    "insurance_prediction_results.csv",
-    index=False
+st.caption(
+    "Prediction for a 19-year-old female, BMI 27.9, "
+    "with 0 children, smoker=yes, region=southwest."
 )
 
-st.download_button(
-    label="Download Prediction Results CSV",
-    data=results.to_csv(index=False),
-    file_name="insurance_prediction_results.csv",
-    mime="text/csv"
-)
+st.divider()
 
-st.info(
-    "Practical completed successfully. "
-    "The model, evaluation metrics, charts, and new individual "
-    "prediction have been generated."
-)
+st.markdown("""
+<div style="text-align:center; color:#94A3B8; padding:10px;">
+    Insurance Charges Prediction | Linear Regression Practical
+</div>
+""", unsafe_allow_html=True)

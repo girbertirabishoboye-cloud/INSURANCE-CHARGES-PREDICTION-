@@ -181,7 +181,7 @@ df = df[required_columns].dropna().copy()
 
 st.divider()
 
-st.header("📊 Question 6: Dataset Exploration")
+st.header("📊  Dataset Exploration")
 
 metric1, metric2, metric3 = st.columns(3)
 
@@ -209,7 +209,7 @@ with st.expander("View Summary Statistics"):
 
 st.divider()
 
-st.header("🔠 Question 7: Categorical Variables")
+st.header("🔠  Categorical Variables")
 
 st.markdown("""
 Categorical features are converted into numerical features
@@ -240,7 +240,7 @@ with st.expander("View Encoded Dataset", expanded=True):
 
 st.divider()
 
-st.header("📂 Question 8: Training and Testing Split")
+st.header("📂 Training and Testing Split")
 
 X = df_encoded.drop(columns=["charges"])
 y = df_encoded["charges"]
@@ -273,7 +273,7 @@ with col2:
 
 st.divider()
 
-st.header("🤖 Question 9: Model Training")
+st.header("🤖  Model Training")
 
 model = LinearRegression()
 model.fit(X_train, y_train)
@@ -303,7 +303,7 @@ st.code(f"{model.intercept_:.4f}")
 
 st.divider()
 
-st.header("🧮 Question 10: Regression Equation")
+st.header("🧮  Regression Equation")
 
 equation = f"charges = {model.intercept_:.4f}"
 
@@ -323,7 +323,7 @@ with st.expander("View Complete Equation", expanded=True):
 
 st.divider()
 
-st.header("📈 Question 11: Model Evaluation")
+st.header("📈  Model Evaluation")
 
 y_pred = model.predict(X_test)
 
@@ -363,7 +363,7 @@ st.caption(
 
 st.divider()
 
-st.header("📉 Question 12(i): Regression Plot")
+st.header("📉  Regression Plot")
 
 fig1, ax1 = plt.subplots(figsize=(10, 6))
 
@@ -432,7 +432,7 @@ plt.close(fig1)
 # CONFUSION MATRIX EXPLANATION
 # ============================================================
 
-st.markdown("### Question 12(ii): Confusion Matrix Heatmap")
+st.markdown("###: Confusion Matrix Heatmap")
 
 st.info("""
 A confusion matrix is suitable for classification models.
@@ -448,7 +448,7 @@ for this regression task.
 
 st.divider()
 
-st.header("💰 Question 13: Insurance Charges Prediction")
+st.header("💰 Insurance Charges Prediction")
 
 st.markdown("""
 ### Individual Information

@@ -2,7 +2,7 @@
 """
 INSURANCE CHARGES PREDICTION
 Professional Machine Learning Dashboard
-Linear Regression Practical - Questions 6 to 13
+
 """
 
 from pathlib import Path
@@ -176,7 +176,7 @@ df = df[required_columns].dropna().copy()
 
 
 # ============================================================
-# QUESTION 6: LOAD AND DISPLAY DATASET
+# LOAD AND DISPLAY DATASET
 # ============================================================
 
 st.divider()
@@ -204,7 +204,7 @@ with st.expander("View Summary Statistics"):
 
 
 # ============================================================
-# QUESTION 7: ONE-HOT ENCODING
+# ONE-HOT ENCODING
 # ============================================================
 
 st.divider()
@@ -235,7 +235,7 @@ with st.expander("View Encoded Dataset", expanded=True):
 
 
 # ============================================================
-# QUESTION 8: TRAINING AND TESTING SPLIT
+# TRAINING AND TESTING SPLIT
 # ============================================================
 
 st.divider()
@@ -268,7 +268,7 @@ with col2:
 
 
 # ============================================================
-# QUESTION 9: LINEAR REGRESSION MODEL
+# LINEAR REGRESSION MODEL
 # ============================================================
 
 st.divider()
@@ -298,7 +298,7 @@ st.code(f"{model.intercept_:.4f}")
 
 
 # ============================================================
-# QUESTION 10: REGRESSION EQUATION
+# REGRESSION EQUATION
 # ============================================================
 
 st.divider()
@@ -318,7 +318,7 @@ with st.expander("View Complete Equation", expanded=True):
 
 
 # ============================================================
-# QUESTION 11: MODEL EVALUATION
+# MODEL EVALUATION
 # ============================================================
 
 st.divider()
@@ -358,7 +358,7 @@ st.caption(
 
 
 # ============================================================
-# QUESTION 12(i): ACTUAL VS PREDICTED REGRESSION PLOT
+# ACTUAL VS PREDICTED REGRESSION PLOT
 # ============================================================
 
 st.divider()
@@ -429,7 +429,7 @@ plt.close(fig1)
 
 
 # ============================================================
-# QUESTION 12(ii): CONFUSION MATRIX EXPLANATION
+# CONFUSION MATRIX EXPLANATION
 # ============================================================
 
 st.markdown("### Question 12(ii): Confusion Matrix Heatmap")
@@ -443,7 +443,7 @@ for this regression task.
 
 
 # ============================================================
-# QUESTION 13: PREDICT CHARGES
+# PREDICT CHARGES
 # ============================================================
 
 st.divider()

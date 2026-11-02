@@ -1,1 +1,7 @@
-pandas\nnumpy\nmatplotlib\nseaborn\nscikit-learn\njupyter\nnotebook\n
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+streamlit
+joblib
